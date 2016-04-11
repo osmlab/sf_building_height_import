@@ -1,0 +1,4 @@
+*.swp
+output/**
+sources/**
+venv
