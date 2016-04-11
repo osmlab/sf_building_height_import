@@ -1,0 +1,33 @@
+{
+    "tags": {
+        "load_all": true
+    },
+    "tables": {
+        "buildings": {
+            "columns": [
+                {
+                    "type": "id",
+                    "name": "osm_id",
+                    "key": null
+                },
+                {
+                    "type": "geometry",
+                    "name": "geometry",
+                    "key": null
+                },
+                {
+                    "type": "hstore_tags",
+                    "name": "tags",
+                    "key": null
+                }
+            ],
+            "type": "geometry",
+            "type_mappings": {
+                "polygons": {
+                    "building": ["__any__"],
+                    "building:part": ["__any__"]
+                }
+            }
+        }
+    }
+}
