@@ -39,11 +39,8 @@ floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),17
 floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),17)))::integer-1 as z17_y,
 floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),18)))::integer as z18_x, 
 floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),18)))::integer-1 as z18_y,
-floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),19)))::integer as z19_x, 
-floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),19)))::integer-1 as z19_y,
 FALSE AS z17_task,
-FALSE AS z18_task,
-FALSE AS z19_task
+FALSE AS z18_task
 FROM intersections i 
 LEFT JOIN osm_buildings o 
 ON i.osm_id = o.osm_id 
@@ -51,20 +48,16 @@ LEFT JOIN building_footprint b
 ON b.gid = i.gid 
 WHERE selected AND area > 10;
 
-/* The bounds of our task are either a zoom 17, 18 or 19 web mercator tile. 
+/* The bounds of our task are either a zoom 17 or 18 web mercator tile. 
    We use aggregation to determine which size task each feature falls into -
    We want a max of 50 "features" per task. */
 UPDATE features SET z17_task = TRUE WHERE (z17_x, z17_y) IN (
-  SELECT z17_x, z17_y FROM features GROUP BY z17_x, z17_y HAVING count(*) <= 50
+  SELECT z17_x, z17_y FROM features GROUP BY z17_x, z17_y HAVING count(*) <= 100
   );
-UPDATE features SET z18_task = TRUE WHERE (z18_x, z18_y) IN (
-  SELECT z18_x, z18_y FROM features WHERE z17_task IS FALSE GROUP BY z18_x, z18_y HAVING count(*) <= 50
-  );
-UPDATE features SET z19_task = TRUE WHERE z17_task IS FALSE AND z18_task IS FALSE;
+UPDATE features SET z18_task = TRUE WHERE z17_task IS FALSE;
 
 /* Finally, create a list of all tasks from our features table.
    The size of this table is the total # of tasks. */
 CREATE TABLE tasks (z integer, x integer, y integer);
 INSERT INTO tasks SELECT DISTINCT 17 AS z, z17_x AS x, z17_y AS y FROM features WHERE z17_task;
 INSERT INTO tasks SELECT DISTINCT 18 AS z, z18_x AS x, z18_y AS y FROM features WHERE z18_task;
-INSERT INTO tasks SELECT DISTINCT 19 AS z, z19_x AS x, z19_y AS y FROM features WHERE z19_task;
