@@ -33,12 +33,14 @@ CREATE TABLE features AS
 SELECT o.osm_id,
 o.geometry, 
 b.height,
+area / ST_Area(o.geometry) as confidence,
 floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),16)))::integer as z16_x, 
 floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),16)))::integer-1 as z16_y,
 floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),17)))::integer as z17_x, 
 floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),17)))::integer-1 as z17_y,
 floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),18)))::integer as z18_x, 
 floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),18)))::integer-1 as z18_y,
+FALSE AS z16_task,
 FALSE AS z17_task,
 FALSE AS z18_task
 FROM intersections i 
