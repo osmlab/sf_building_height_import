@@ -1,3 +1,7 @@
 psycopg2
 shapely
 tilestache
+requests
+lxml
+Flask
+mercantile
