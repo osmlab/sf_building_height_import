@@ -2,3 +2,4 @@
 output/**
 sources/**
 venv
+*.pyc
