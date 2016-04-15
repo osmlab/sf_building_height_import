@@ -8,12 +8,12 @@ from lxml import etree
 
 height_db = task.height_db()
 
-@app.route("/")
+@app.route("/api")
 def status():
   return "OK"
 
-#16,10490,25317
-@app.route("/sfbuildingheight_<int:z>_<int:x>_<int:y>.osm")
+# example: /api/sfbuildingheight_16_10490_25317.osm
+@app.route("/api/sfbuildingheight_<int:z>_<int:x>_<int:y>.osm")
 def changeset(z,x,y):
   if z < 16:
     print "Too big"
