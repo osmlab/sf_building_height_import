@@ -6,7 +6,7 @@ import task
 from io import BytesIO
 from lxml import etree
 
-height_db = tasks.height_db()
+height_db = task.height_db()
 
 #16,10490,25317
 @app.route("/sfbuildingheight_<int:z>_<int:x>_<int:y>.osm")
