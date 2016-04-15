@@ -26,7 +26,7 @@ output/sf_building_height_imagery.shp:
 	pgsql2shp -f output/sf_building_height_imagery.shp -h /tmp/ us.ca.san_francisco "select geom, height, coloring from building_footprint;"
 
 output/heights.csv:
-	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height from features where confidence > 0.7" > output/heights.csv
+	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height, round(confidence::numeric,2) from features" > output/heights.csv
 
 sources:
 	cd sources
