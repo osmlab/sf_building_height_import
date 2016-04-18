@@ -21,3 +21,8 @@ area[building][height], area[building:part][height]
         fill-color: #00ff00;
 }
 
+setting::shrink_nodes {
+  type: boolean;
+  label: tr("Less obtrusive node symbols at low zoom");
+  default: true;
+}
