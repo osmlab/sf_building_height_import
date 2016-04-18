@@ -88,6 +88,20 @@ class TestTask(unittest.TestCase):
     # does not retain buildings if not appearing in height db
     self.assertEqual(len(changeset), 2)
 
+  def test_preserves_heights(self):
+    building_db = {'1':(5,0.9)}
+    empty_osm = """<?xml version="1.0" encoding="UTF-8"?>
+      <osm>
+        <way id="1">
+          <tag k="building" v="yes"/>
+          <tag k="height" v="20"/>
+        </way>
+      </osm>
+    """
+    changeset = task.changeset(BytesIO(empty_osm),building_db)
+
+    # does not overwrite existing heights
+    self.assertEqual(len(changeset), 0)
 
 if __name__ == '__main__':
     unittest.main()
