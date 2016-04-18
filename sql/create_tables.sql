@@ -53,13 +53,13 @@ WHERE selected AND area > 10;
 /* The bounds of our task are either a zoom 17 or 18 web mercator tile. 
    We use aggregation to determine which size task each feature falls into -
    We want a max of 50 "features" per task. */
-UPDATE features SET z17_task = TRUE WHERE (z17_x, z17_y) IN (
-  SELECT z17_x, z17_y FROM features GROUP BY z17_x, z17_y HAVING count(*) <= 100
+UPDATE features SET z16_task = TRUE WHERE (z16_x, z16_y) IN (
+  SELECT z16_x, z16_y FROM features GROUP BY z16_x, z16_y HAVING count(*) <= 500
   );
-UPDATE features SET z18_task = TRUE WHERE z17_task IS FALSE;
+UPDATE features SET z17_task = TRUE WHERE z16_task IS FALSE;
 
 /* Finally, create a list of all tasks from our features table.
    The size of this table is the total # of tasks. */
 CREATE TABLE tasks (z integer, x integer, y integer);
+INSERT INTO tasks SELECT DISTINCT 16 AS z, z16_x AS x, z16_y AS y FROM features WHERE z16_task;
 INSERT INTO tasks SELECT DISTINCT 17 AS z, z17_x AS x, z17_y AS y FROM features WHERE z17_task;
-INSERT INTO tasks SELECT DISTINCT 18 AS z, z18_x AS x, z18_y AS y FROM features WHERE z18_task;
