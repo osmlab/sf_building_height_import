@@ -39,7 +39,7 @@ http://tiles.openmassing.org/sf_building_height_import/{z}/{x}/{y}.png
 Make sure it is activated.
 
 
-The JOSM changeset you will open has:
+The JOSM changeset you will open only includes buildings that don't currently have heights in OSM. The colors:
 Automatically determined heights in green.
 In blue, candidate buildings that overlapped a LIDAR footprint but we're not sure about.
 
