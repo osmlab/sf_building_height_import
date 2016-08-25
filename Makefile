@@ -7,9 +7,6 @@ create_db:
 	imposm3 import -mapping=imposm3_mapping.json -read sources/san-francisco_california.osm.pbf -connection=postgres://localhost/us.ca.san_francisco -write -deployproduction -overwritecache
 	psql us.ca.san_francisco -c "UPDATE osm_buildings SET geometry = ST_MakeValid(geometry);"
 
-color_lidar:
-	python lidar_coloring.py
-
 create_tables:
 	psql us.ca.san_francisco -f sql/create_tables.sql
 
@@ -18,9 +15,6 @@ output/tangram_tiles:
 
 output/osmtm_tasks.geojson:
 	python create_osmtm_tasks.py > output/osmtm_tasks.geojson
-
-output/sf_building_height_imagery.shp:
-	pgsql2shp -f output/sf_building_height_imagery.shp -h /tmp/ us.ca.san_francisco "select geom, height, coloring from building_footprint;"
 
 output/heights.csv:
 	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height, round(confidence::numeric,2) from features" > output/heights.csv

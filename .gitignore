@@ -3,3 +3,4 @@ output/**
 sources/**
 venv
 *.pyc
+SF2014_bldg_height.*
