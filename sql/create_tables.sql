@@ -1,54 +1,25 @@
-DROP TABLE IF EXISTS intersections;
 DROP TABLE IF EXISTS features;
 DROP TABLE IF EXISTS tasks;
 
-UPDATE building_footprint SET height = round(maxheight-minheight)::integer;
+create table features as
+SELECT osm_id,
+       geometry, 
+       round(ST_Value(rast,ST_Centroid(geometry)))::integer AS height,
+       ST_Centroid(geometry) as centroid,
+       floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),16)))::integer as z16_x, 
+       floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),16)))::integer-1 as z16_y,
+       floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),17)))::integer as z17_x, 
+       floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),17)))::integer-1 as z17_y,
+       floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),18)))::integer as z18_x, 
+       floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),18)))::integer-1 as z18_y,
+       FALSE AS z16_task,
+       FALSE AS z17_task,
+       FALSE AS z18_task
+FROM sf2014_bldg_height, osm_buildings 
+WHERE ST_Intersects(rast,ST_Centroid(geometry)) 
+AND ST_GeometryType(geometry) != 'ST_GeometryCollection';
 
-/* Conflate the LIDAR and OSM building footprints.
-   A OSM building may intersect multiple LIDAR observations. */
-CREATE TABLE intersections AS 
-  SELECT a.osm_id, 
-         b.gid, 
-         ST_Area(ST_Intersection(a.geometry,b.geom)) AS area, 
-         false AS selected 
-  FROM osm_buildings a 
-  INNER JOIN building_footprint b 
-  ON ST_Intersects(a.geometry,b.geom) 
-  WHERE ST_GeometryType(a.geometry) != 'ST_GeometryCollection';
-
-/* Mark the LIDAR observation with the largest intersection
-   as "Selected". We'll use this one to create a Feature. */
-UPDATE intersections 
-  SET selected = true 
-  FROM (
-    SELECT osm_id, gid FROM intersections WHERE (osm_id, area) IN (
-      SELECT osm_id, max(area) FROM intersections GROUP BY osm_id
-    )
-  ) AS subquery
-  WHERE subquery.osm_id = intersections.osm_id AND subquery.gid = intersections.gid;
-
-/* "Features" are our derived building footprints with LIDAR height.
-   We'll add some helper columns for which mercator tile they belong to. */
-CREATE TABLE features AS
-SELECT o.osm_id,
-o.geometry, 
-b.height,
-area / ST_Area(o.geometry) as confidence,
-floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),16)))::integer as z16_x, 
-floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),16)))::integer-1 as z16_y,
-floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),17)))::integer as z17_x, 
-floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),17)))::integer-1 as z17_y,
-floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),18)))::integer as z18_x, 
-floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(o.geometry),4326),18)))::integer-1 as z18_y,
-FALSE AS z16_task,
-FALSE AS z17_task,
-FALSE AS z18_task
-FROM intersections i 
-LEFT JOIN osm_buildings o 
-ON i.osm_id = o.osm_id 
-LEFT JOIN building_footprint b
-ON b.gid = i.gid 
-WHERE selected AND area > 10;
+DELETE FROM features WHERE height IS NULL OR height = 0;
 
 /* The bounds of our task are either a zoom 17 or 18 web mercator tile. 
    We use aggregation to determine which size task each feature falls into -

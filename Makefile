@@ -4,11 +4,8 @@ create_db:
 	psql us.ca.san_francisco -c "CREATE EXTENSION hstore;"
 	psql us.ca.san_francisco -f sql/srid_102643.sql
 	psql us.ca.san_francisco -f sql/postgis2gmap.sql
-	shp2pgsql -I -s 102643:3857 ../sources/building_footprint/building_footprint.shp > building_footprint.sql
-	psql us.ca.san_francisco -f building_footprint.sql
-	rm building_footprint.sql
-	imposm3 import -mapping=imposm3_mapping.json -read ../sources/san-francisco_california.osm.pbf -connection=postgres://localhost/us.ca.san_francisco -write -deployproduction -overwritecache
-	psql us.ca.san_francisco -f sql/prepare.sql
+	imposm3 import -mapping=imposm3_mapping.json -read sources/san-francisco_california.osm.pbf -connection=postgres://localhost/us.ca.san_francisco -write -deployproduction -overwritecache
+	psql us.ca.san_francisco -c "UPDATE osm_buildings SET geometry = ST_MakeValid(geometry);"
 
 color_lidar:
 	python lidar_coloring.py
@@ -31,7 +28,14 @@ output/heights.csv:
 sources:
 	cd sources
 	wget https://s3.amazonaws.com/metro-extracts.mapzen.com/san-francisco_california.osm.pbf
-	wget http://apps.sfgov.org/datafiles/view.php?file=sfgis/building_footprint.zip
+	wget https://sfgis-svc.sfgov.org/sfgis/SF2014_bldg_height_1m.zip
+
+SF2014_bldg_height:
+	gdalwarp -s_srs sf13.prj -t_srs EPSG:3857 sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img SF2014_bldg_height.img
+	# tiff is for Mapnik rendering
+	gdalwarp -of GTiff SF2014_bldg_height.img SF2014_bldg_height.tiff
+	raster2pgsql -d -I -t 100x100 SF2014_bldg_height.img > SF2014_bldg_height.sql
+	psql us.ca.san_francisco -f SF2014_bldg_height.sql
 
 clean:
 	dropdb us.ca.san_francisco
