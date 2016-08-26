@@ -19,6 +19,11 @@ output/osmtm_tasks.geojson:
 output/heights.csv:
 	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height, round(confidence::numeric,2) from features" > output/heights.csv
 
+output/imagery:
+	pgsql2shp -f output/imagery_buildings.shp -h /tmp/ us.ca.san_francisco "select geometry from features;"
+	pgsql2shp -f output/imagery_centroids.shp -h /tmp/ us.ca.san_francisco "select height, ST_Centroid(geometry) as geometry from features;"
+	# shapeindex
+
 sources:
 	cd sources
 	wget https://s3.amazonaws.com/metro-extracts.mapzen.com/san-francisco_california.osm.pbf

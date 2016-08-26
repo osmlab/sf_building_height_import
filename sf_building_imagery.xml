@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Map[]>
+<Map srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over" background-color="#333333" buffer-size="256">
+
+<Parameters>
+  <Parameter name="bounds">-180,-85.05112877980659,180,85.05112877980659</Parameter>
+  <Parameter name="center">0,0,2</Parameter>
+  <Parameter name="format">png8</Parameter>
+  <Parameter name="minzoom">0</Parameter>
+  <Parameter name="maxzoom">22</Parameter>
+  <Parameter name="scale">1</Parameter>
+  <Parameter name="metatile">2</Parameter>
+  <Parameter name="id"><![CDATA[lidar]]></Parameter>
+  <Parameter name="_updated">1472181862000</Parameter>
+  <Parameter name="tilejson"><![CDATA[2.0.0]]></Parameter>
+  <Parameter name="scheme"><![CDATA[xyz]]></Parameter>
+</Parameters>
+
+
+<Style name="sf2014bldgheight" filter-mode="first">
+  <Rule>
+    <RasterSymbolizer opacity="1" scaling="lanczos" default-mode="linear" default-color="#000000" >
+	<stop value="0" color="#000000" /> 
+	<stop value="26" color="#ffffff" /> 
+	<stop value="27" color="#ffffff" /></RasterSymbolizer>
+  </Rule>
+</Style>
+<Layer name="sf2014bldgheight"
+  srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
+    <StyleName>sf2014bldgheight</StyleName>
+    <Datasource>
+       <Parameter name="file"><![CDATA[SF2014_bldg_height.tiff]]></Parameter>
+       <Parameter name="band"><![CDATA[1]]></Parameter>
+       <Parameter name="type"><![CDATA[gdal]]></Parameter>
+    </Datasource>
+  </Layer>
+
+<Style name="buildings" filter-mode="first">
+  <Rule>
+    <LineSymbolizer stroke-width="1" stroke="#ff0000" />
+  </Rule>
+</Style>
+<Layer name="buildings"
+  srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
+    <StyleName>buildings</StyleName>
+    <Datasource>
+       <Parameter name="file"><![CDATA[output/imagery_buildings.shp]]></Parameter>
+       <Parameter name="id"><![CDATA[sfbuildingheightimag]]></Parameter>
+       <Parameter name="project"><![CDATA[lidar]]></Parameter>
+       <Parameter name="srs"><![CDATA[]]></Parameter>
+       <Parameter name="type"><![CDATA[shape]]></Parameter>
+    </Datasource>
+  </Layer>
+
+<Style name="centroids" filter-mode="first">
+  <Rule>
+    <MarkersSymbolizer width="4" fill="#ff0000" stroke-width="0" />
+    <TextSymbolizer face-name="Arial Unicode MS Regular" size="12" fill="#ff0000" dx="3" allow-overlap="true" ><![CDATA[[HEIGHT]]]></TextSymbolizer>
+  </Rule>
+</Style>
+<Layer name="centroids"
+  srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
+    <StyleName>centroids</StyleName>
+    <Datasource>
+       <Parameter name="file"><![CDATA[output/imagery_centroids.shp]]></Parameter>
+       <Parameter name="id"><![CDATA[centroids]]></Parameter>
+       <Parameter name="project"><![CDATA[lidar]]></Parameter>
+       <Parameter name="srs"><![CDATA[]]></Parameter>
+       <Parameter name="type"><![CDATA[shape]]></Parameter>
+    </Datasource>
+  </Layer>
+
+</Map>

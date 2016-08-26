@@ -5,3 +5,4 @@ requests
 lxml
 Flask
 mercantile
+Pillow==2.9.0

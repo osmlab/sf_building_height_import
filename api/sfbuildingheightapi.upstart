@@ -1,0 +1,12 @@
+# Starting conditions
+start on (local-filesystems and net-device-up IFACE=eth0)
+stop on shutdown
+
+respawn
+
+chdir /home/ubuntu/sf_building_height_import/api
+setuid nobody
+
+script
+exec /home/ubuntu/venv/bin/uwsgi --master --socket=127.0.0.1:9000 -w server:app  --enable-threads -p 4
+end script
