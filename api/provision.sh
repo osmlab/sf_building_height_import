@@ -10,5 +10,6 @@ sudo cp tilestache.upstart /etc/init/tilestache.conf
 ln -s /usr/lib/pymodules/python2.7/mapnik ~/venv/lib/python2.7/site-packages/mapnik
 ln -s /usr/lib/python2.7/dist-packages/lxml ~/venv/lib/python2.7/site-packages/lxml
 
-# get the shapefile
+sudo cp sfbuildingheightapi.upstart /etc/init/sfbuildingheightapi.conf
+
 # sudo service tilestache start
