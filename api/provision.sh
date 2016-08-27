@@ -1,4 +1,4 @@
-sudo apt-get install libxslt1-dev gdal-bin
+sudo apt-get install libxslt1-dev gdal-bin mapnik-input-plugin-gdal
 
 ~/venv/bin/pip install tilestache uwsgi Pillow==2.9.0
 

@@ -11,7 +11,7 @@
   <Parameter name="scale">1</Parameter>
   <Parameter name="metatile">2</Parameter>
   <Parameter name="id"><![CDATA[lidar]]></Parameter>
-  <Parameter name="_updated">1472181862000</Parameter>
+  <Parameter name="_updated">1472263489000</Parameter>
   <Parameter name="tilejson"><![CDATA[2.0.0]]></Parameter>
   <Parameter name="scheme"><![CDATA[xyz]]></Parameter>
 </Parameters>
@@ -19,6 +19,7 @@
 
 <Style name="sf2014bldgheight" filter-mode="first">
   <Rule>
+    <MaxScaleDenominator>5000</MaxScaleDenominator>
     <RasterSymbolizer opacity="1" scaling="lanczos" default-mode="linear" default-color="#000000" >
 	<stop value="0" color="#000000" /> 
 	<stop value="26" color="#ffffff" /> 
@@ -29,7 +30,7 @@
   srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
     <StyleName>sf2014bldgheight</StyleName>
     <Datasource>
-       <Parameter name="file"><![CDATA[../output/SF2014_bldg_height.tiff]]></Parameter>
+       <Parameter name="file"><![CDATA[../output/SF_2014_bldg_height.tiff]]></Parameter>
        <Parameter name="band"><![CDATA[1]]></Parameter>
        <Parameter name="type"><![CDATA[gdal]]></Parameter>
     </Datasource>
@@ -37,6 +38,7 @@
 
 <Style name="buildings" filter-mode="first">
   <Rule>
+    <MaxScaleDenominator>5000</MaxScaleDenominator>
     <LineSymbolizer stroke-width="1" stroke="#ff0000" />
   </Rule>
 </Style>
@@ -54,8 +56,9 @@
 
 <Style name="centroids" filter-mode="first">
   <Rule>
+    <MaxScaleDenominator>5000</MaxScaleDenominator>
     <MarkersSymbolizer width="4" fill="#ff0000" stroke-width="0" />
-    <TextSymbolizer face-name="Arial Unicode MS Regular" size="12" fill="#ff0000" dx="3" allow-overlap="true" ><![CDATA[[HEIGHT]]]></TextSymbolizer>
+    <TextSymbolizer face-name="DejaVu Sans Book" size="12" fill="#ff0000" dx="3" allow-overlap="true" ><![CDATA[[HEIGHT]]]></TextSymbolizer>
   </Rule>
 </Style>
 <Layer name="centroids"
