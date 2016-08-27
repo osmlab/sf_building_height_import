@@ -17,7 +17,7 @@ output/osmtm_tasks.geojson:
 	python create_osmtm_tasks.py > output/osmtm_tasks.geojson
 
 output/heights.csv:
-	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height, round(confidence::numeric,2) from features" > output/heights.csv
+	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height from features" > output/heights.csv
 
 output/imagery:
 	pgsql2shp -f output/imagery_buildings.shp -h /tmp/ us.ca.san_francisco "select geometry from features;"

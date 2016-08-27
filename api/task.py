@@ -1,13 +1,11 @@
 from lxml import etree
 import csv
 
-MIN_CONFIDENCE = 0.7
-
 def height_db():
   db = {}
   with open('../output/heights.csv', 'rb') as csvfile:
     for row in csv.reader(csvfile, delimiter=','):
-      db[row[0]] = (row[1],float(row[2]))
+      db[row[0]] = row[1]
   return db
 
 def should_add_tag(elem):
@@ -32,13 +30,9 @@ def changeset(xml_bytes, height_db):
     if elem.tag == 'way':
       way_id = elem.get("id")
       if should_add_tag(elem) and height_db.has_key(way_id):
-        if height_db[way_id][1] > MIN_CONFIDENCE:
-          height = height_db[way_id][0]
-          elem.append(etree.Element('tag', k="height", v=str(height)))
-          elem.set("action","modify")
-        else:
-          # retain the building, but do not add a height tag
-          pass
+        height = height_db[way_id]
+        elem.append(etree.Element('tag', k="height", v=str(height)))
+        elem.set("action","modify")
       else:
         elem.getparent().remove(elem)
     if elem.tag == 'relation':

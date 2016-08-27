@@ -16,7 +16,7 @@ class TestTask(unittest.TestCase):
     self.assertTrue(changeset[0].tag == 'bounds')
 
   def test_preserves_only_referenced(self):
-    building_db = {'10':(5,0.9)}
+    building_db = {'10':5}
     empty_osm = """<?xml version="1.0" encoding="UTF-8"?>
       <osm>
         <node id="1"/>
@@ -57,7 +57,7 @@ class TestTask(unittest.TestCase):
     self.assertEqual(len(changeset),2)
 
   def test_adds_heights(self):
-    building_db = {'1':(5,0.9),'2':(5,0.2)}
+    building_db = {'1':5,'2':5}
     empty_osm = """<?xml version="1.0" encoding="UTF-8"?>
       <osm>
         <way id="1">
@@ -73,23 +73,17 @@ class TestTask(unittest.TestCase):
     """
     changeset = task.changeset(BytesIO(empty_osm),building_db)
 
-    # adds heights with high confidence
     way = changeset[0]
     self.assertEqual(way.get("id"),"1")
     self.assertEqual(way[1].tag,"tag")
     self.assertEqual(way[1].get("k"),"height")
     self.assertEqual(way[1].get("v"),"5")
 
-    # retains buildings, but does not add heights if not high confidence
-    way = changeset[1]
-    self.assertEqual(way.get("id"),"2")
-    self.assertEqual(len(way),1)
-
     # does not retain buildings if not appearing in height db
     self.assertEqual(len(changeset), 2)
 
   def test_preserves_heights(self):
-    building_db = {'1':(5,0.9)}
+    building_db = {'1':5}
     empty_osm = """<?xml version="1.0" encoding="UTF-8"?>
       <osm>
         <way id="1">
