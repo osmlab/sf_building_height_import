@@ -32,11 +32,16 @@ sources:
 SF2014_bldg_height:
 	gdalwarp -s_srs sf13.prj -t_srs EPSG:3857 sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img SF2014_bldg_height.img
 	# tiff is for Mapnik rendering
-	gdalwarp -of GTiff SF2014_bldg_height.img SF2014_bldg_height.tiff
+	gdalwarp -of GTiff SF2014_bldg_height.img output/SF2014_bldg_height.tiff
 	raster2pgsql -d -I -t 100x100 SF2014_bldg_height.img > SF2014_bldg_height.sql
 	psql us.ca.san_francisco -f SF2014_bldg_height.sql
+	rm SF2014_bldg_height.sql
+	rm SF2014_bldg_height.img
 
 clean:
 	dropdb us.ca.san_francisco
 	rm -r output/tangram_tiles
 	rm output/*.geojson
+
+zip:
+	tar -cvzf api_data.tgz output

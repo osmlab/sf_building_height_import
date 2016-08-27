@@ -24,7 +24,7 @@ for result in cur:
   tile = (int(result[1]),int(result[2]))
   if current_tile and tile != current_tile:
     print "Writing 16 {0}".format(tile)
-    path = 'output/tangram_tiles/16/{0}'.format(tile[0])
+    path = 'tangram_tiles/16/{0}'.format(tile[0])
     mkdir_p(path)
     with open(path + "/" + str(tile[1]) + ".json",'w') as f:
       f.write(json.dumps({'buildings':{'type':'FeatureCollection','features':features}}))
