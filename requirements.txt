@@ -2,7 +2,7 @@ psycopg2
 shapely
 tilestache
 requests
-lxml
+# lxml: don't install me on linux! get me from ubuntu repository!!!
 Flask
 mercantile
 Pillow==2.9.0
