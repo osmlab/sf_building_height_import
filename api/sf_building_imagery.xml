@@ -20,7 +20,7 @@
 <Style name="sf2014bldgheight" filter-mode="first">
   <Rule>
     <MaxScaleDenominator>5000</MaxScaleDenominator>
-    <RasterSymbolizer opacity="1" scaling="lanczos" default-mode="linear" default-color="#000000" >
+    <RasterSymbolizer opacity="1" scaling="fast" default-mode="linear" default-color="#000000" >
 	<stop value="0" color="#000000" /> 
 	<stop value="26" color="#ffffff" /> 
 	<stop value="27" color="#ffffff" /></RasterSymbolizer>
