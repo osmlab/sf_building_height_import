@@ -10,7 +10,7 @@ create_db:
 create_tables:
 	psql us.ca.san_francisco -f sql/create_tables.sql
 
-output/tangram_tiles:
+tangram_tiles:
 	python create_tangram_tiles.py
 
 output/osmtm_tasks.geojson:

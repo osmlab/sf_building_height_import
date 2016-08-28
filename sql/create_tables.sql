@@ -21,9 +21,9 @@ AND ST_GeometryType(geometry) != 'ST_GeometryCollection';
 
 DELETE FROM features WHERE height IS NULL OR height = 0;
 
-/* The bounds of our task are either a zoom 17 or 18 web mercator tile. 
+/* The bounds of our task are either a zoom 16 or 17 web mercator tile. 
    We use aggregation to determine which size task each feature falls into -
-   We want a max of 50 "features" per task. */
+   We want a max of 500 "features" per task. */
 UPDATE features SET z16_task = TRUE WHERE (z16_x, z16_y) IN (
   SELECT z16_x, z16_y FROM features GROUP BY z16_x, z16_y HAVING count(*) <= 500
   );
