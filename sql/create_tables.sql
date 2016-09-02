@@ -1,11 +1,10 @@
 DROP TABLE IF EXISTS features;
 DROP TABLE IF EXISTS tasks;
 
-create table features as
-SELECT osm_id,
+CREATE table features as SELECT osm_id,
        geometry, 
-       round(ST_Value(rast,ST_Centroid(geometry)))::integer AS height,
-       ST_Centroid(geometry) as centroid,
+       round((ST_SummaryStats(ST_Clip(rast,ST_Buffer(geometry,-2),true))).max)::integer as height_max,
+       ST_Buffer(geometry,-2) as query_area,
        floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),16)))::integer as z16_x, 
        floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),16)))::integer-1 as z16_y,
        floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),17)))::integer as z17_x, 
@@ -15,11 +14,11 @@ SELECT osm_id,
        FALSE AS z16_task,
        FALSE AS z17_task,
        FALSE AS z18_task
-FROM sf2014_bldg_height, osm_buildings 
+FROM sf2014_bldg_height, osm_buildings as foo
 WHERE ST_Intersects(rast,ST_Centroid(geometry)) 
 AND ST_GeometryType(geometry) != 'ST_GeometryCollection';
 
-DELETE FROM features WHERE height IS NULL OR height = 0;
+DELETE FROM features WHERE height_max IS NULL OR height_max = 0;
 
 /* The bounds of our task are either a zoom 16 or 17 web mercator tile. 
    We use aggregation to determine which size task each feature falls into -
