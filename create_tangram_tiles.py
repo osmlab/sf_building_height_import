@@ -16,7 +16,7 @@ def mkdir_p(path):
 
 conn = psycopg2.connect(dbname="us.ca.san_francisco")
 cur = conn.cursor()
-cur.execute("select osm_id, z16_x, z16_y, ST_AsBinary(ST_Transform(geometry,4326)), height from features order by z16_x, z16_y")
+cur.execute("select osm_id, z16_x, z16_y, ST_AsBinary(ST_Transform(geometry,4326)), height_max from features order by z16_x, z16_y")
 
 current_tile = None
 features = []
