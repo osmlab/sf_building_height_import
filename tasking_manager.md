@@ -20,7 +20,15 @@ Buildings - review the automatically added `height` tags
 
 ## Changeset comment
 
+```
 San Francisco Building Height Import #sfbuildingheights https://wiki.openstreetmap.org/wiki/San_Francisco_Building_Height_Import
+```
+
+## Changeset source
+
+```
+SF City  1 meter LIDAR building height dataset, 2014. https://sfgis-svc.sfgov.org/sfgis/SF2014_bldg_height_1m.zip
+```
 
 ## Detailed Instructions
 
@@ -33,13 +41,14 @@ Click "Download in JOSM" when you have locked a task. It should open in JOSM.
 Add this Map Style to JOSM: [buildingheights.css](https://raw.githubusercontent.com/osmlab/sf_building_height_import/master/buildingheights.css). It's a panel in the right sidebar. Make sure it is activated. 
 
 Add the LIDAR and building centroid imagery: menu Tab Imagery > Add TMS entry...
+
 ```
-http://tiles.openmassing.org/sf_building_height_import/{z}/{x}/{y}.png
+tms:https://s3-us-west-2.amazonaws.com/openmassing/sf_lidar/{z}/{x}/{y}.png
 ```
+
 Make sure it is activated.
 
-
-The JOSM changeset you will open only includes buildings that don't currently have heights in OSM.
+The JOSM changeset you will only include buildings that don't currently have heights in OSM.
 
 Your tasks is to remove the height tags from any buildings that do not have an accurate LIDAR reading.
 If you do not think the building should have a height tag, DO NOT DELETE IT FROM THE LAYER!
