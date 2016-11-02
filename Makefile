@@ -28,6 +28,7 @@ sources:
 	cd sources
 	wget https://s3.amazonaws.com/metro-extracts.mapzen.com/san-francisco_california.osm.pbf
 	wget https://sfgis-svc.sfgov.org/sfgis/SF2014_bldg_height_1m.zip
+	wget https://sfgis-svc.sfgov.org/sfgis/San_Francisco_Bldg_withZ_20161028.zip
 
 SF2014_bldg_height:
 	gdalwarp -s_srs sf13.prj -t_srs EPSG:3857 sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img SF2014_bldg_height.img
