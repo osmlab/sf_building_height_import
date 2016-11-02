@@ -45,3 +45,8 @@ clean:
 
 zip:
 	tar -cvzf api_data.tgz output
+
+# ASCII grid for use with Meshlab
+output/mesh:
+	gdalwarp -te -122.465629578 37.7567370535 -122.454299927 37.7654225277 -of "AAIGrid" sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img sunset.asc
+
