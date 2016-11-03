@@ -24,11 +24,13 @@ output/imagery:
 	pgsql2shp -f output/imagery_centroids.shp -h /tmp/ us.ca.san_francisco "select height_max, ST_Centroid(geometry) as geometry from features;"
 	# shapeindex
 
+output/mesh:
+	gdalwarp -te -122.465629578 37.7567370535 -122.454299927 37.7654225277 -of "AAIGrid" sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img sunset.asc
+
 sources:
 	cd sources
 	wget https://s3.amazonaws.com/metro-extracts.mapzen.com/san-francisco_california.osm.pbf
 	wget https://sfgis-svc.sfgov.org/sfgis/SF2014_bldg_height_1m.zip
-	wget https://sfgis-svc.sfgov.org/sfgis/San_Francisco_Bldg_withZ_20161028.zip
 
 SF2014_bldg_height:
 	gdalwarp -s_srs sf13.prj -t_srs EPSG:3857 sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img SF2014_bldg_height.img
@@ -47,7 +49,5 @@ clean:
 zip:
 	tar -cvzf api_data.tgz output
 
-# ASCII grid for use with Meshlab
-output/mesh:
-	gdalwarp -te -122.465629578 37.7567370535 -122.454299927 37.7654225277 -of "AAIGrid" sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img sunset.asc
-
+SF2016_building_footprints:
+	ogr2ogr -f "PostgreSQL" PG:dbname=us.ca.san_francisco -sql "select * from wm84_bldgfoot_withz_20161005_pgz" sources/San_Francisco_Bldg_withZ_20161028/SF_Bldg_201610.gdb
