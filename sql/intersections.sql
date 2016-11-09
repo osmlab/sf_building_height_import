@@ -6,7 +6,8 @@ create table intersections as (
     st_area(st_intersection(f.geometry, w.wkb_geometry)) as a,
     st_area(st_intersection(f.geometry, w.wkb_geometry)) / st_area(f.geometry) as a_osm_geom,
     st_area(st_intersection(f.geometry, w.wkb_geometry)) / st_area(w.wkb_geometry) as a_sfdata_geom,
-    false as is_best_match
+    false as is_best_match,
+    w.hgt_Median_m as hgt_Median_m
 	from features f, wm84_bldgfoot_withz_20161005_pgz w 
 	where ST_Intersects(f.geometry, w.wkb_geometry))
 
@@ -17,3 +18,5 @@ SET is_best_match = true
     FROM intersections
     GROUP BY osm_id
     )
+
+//select count(*) from intersections where (a_osm_geom < 0.7 or a_sfdata_geom < 0.7) and is_best_match;

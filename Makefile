@@ -19,11 +19,6 @@ output/osmtm_tasks.geojson:
 output/heights.csv:
 	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height_max from features" > output/heights.csv
 
-output/imagery:
-	pgsql2shp -f output/imagery_buildings.shp -h /tmp/ us.ca.san_francisco "select geometry from features;"
-	pgsql2shp -f output/imagery_centroids.shp -h /tmp/ us.ca.san_francisco "select height_max, ST_Centroid(geometry) as geometry from features;"
-	# shapeindex
-
 output/mesh:
 	gdalwarp -te -122.465629578 37.7567370535 -122.454299927 37.7654225277 -of "AAIGrid" sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img sunset.asc
 
