@@ -1,23 +1,49 @@
+DROP TABLE IF EXISTS intersections;
 DROP TABLE IF EXISTS features;
 DROP TABLE IF EXISTS tasks;
 
-CREATE table features as SELECT osm_id,
-       geometry, 
-       round((ST_SummaryStats(ST_Clip(rast,ST_Buffer(geometry,-2),true))).max)::integer as height_max,
-       ST_Buffer(geometry,-2) as query_area,
-       floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),16)))::integer as z16_x, 
-       floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),16)))::integer as z16_y,
-       floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),17)))::integer as z17_x, 
-       floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(geometry),4326),17)))::integer as z17_y,
-       FALSE AS z16_task,
-       FALSE AS z17_task
-FROM sf2014_bldg_height, osm_buildings as foo
-WHERE ST_Intersects(rast,ST_Centroid(geometry)) 
-AND ST_GeometryType(geometry) != 'ST_GeometryCollection';
+/* Find all intersections of OSM buildings and SFdata footprints */
 
-DELETE FROM features WHERE height_max IS NULL OR height_max = 0;
+CREATE table intersections as (
+  SELECT
+    osm_id, 
+    o.geometry as osm_geom,
+    w.wkb_geometry as sfdata_geom, 
+    st_area(st_intersection(o.geometry, w.wkb_geometry)) as a,
+    st_area(st_intersection(o.geometry, w.wkb_geometry)) / st_area(o.geometry) as a_osm_geom,
+    st_area(st_intersection(o.geometry, w.wkb_geometry)) / st_area(w.wkb_geometry) as a_sfdata_geom,
+    false as is_best_match,
+    w.hgt_Median_m as hgt_Median_m
+	from osm_buildings o, wm84_bldgfoot_withz_20161005_pgz w 
+	where ST_Intersects(o.geometry, w.wkb_geometry))
 
-/* The bounds of our task are either a zoom 16 or 17 web mercator tile. 
+/* Determine the intersection of maximum area as the "best match" intersection */
+
+UPDATE intersections
+SET is_best_match = true
+WHERE (osm_id, a) IN (
+   SELECT osm_id, max(a)
+   FROM intersections
+   GROUP BY osm_id
+   )
+
+/* Create features table of best-match intersections meeting threshold */
+
+CREATE TABLE features AS 
+  SELECT osm_id,
+         osm_geom,
+         round(hgt_Median_m::numeric,2) as height,
+         floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(osm_geom),4326),16)))::integer as z16_x, 
+         floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(osm_geom),4326),16)))::integer as z16_y,
+         floor(ST_X(tile_indices_for_lonlat(ST_Transform(ST_Centroid(osm_geom),4326),17)))::integer as z17_x, 
+         floor(ST_Y(tile_indices_for_lonlat(ST_Transform(ST_Centroid(osm_geom),4326),17)))::integer as z17_y,
+         FALSE AS z16_task,
+         FALSE AS z17_task
+  FROM intersections
+  WHERE is_best_match
+  AND (a_osm_geom > 0.7 AND a_sfdata_geom > 0.7)
+
+  /* The bounds of our task are either a zoom 16 or 17 web mercator tile. 
    We use aggregation to determine which size task each feature falls into -
    We want a max of 500 "features" per task. */
 UPDATE features SET z16_task = TRUE WHERE (z16_x, z16_y) IN (

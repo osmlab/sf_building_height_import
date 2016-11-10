@@ -17,7 +17,7 @@ output/osmtm_tasks.geojson:
 	python create_osmtm_tasks.py > output/osmtm_tasks.geojson
 
 output/heights.csv:
-	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height_max from features" > output/heights.csv
+	psql -d us.ca.san_francisco -t -A -F"," -c "select osm_id, height from features" > output/heights.csv
 
 output/mesh:
 	gdalwarp -te -122.465629578 37.7567370535 -122.454299927 37.7654225277 -of "AAIGrid" sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img sunset.asc
@@ -26,7 +26,20 @@ sources:
 	cd sources
 	wget https://s3.amazonaws.com/metro-extracts.mapzen.com/san-francisco_california.osm.pbf
 	wget https://sfgis-svc.sfgov.org/sfgis/SF2014_bldg_height_1m.zip
+	wget https://sfgis-svc.sfgov.org/sfgis/San_Francisco_Bldg_withZ_20161028.zip
 
+hillshade:
+	gdaldem hillshade sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img L2014_SF_TreeBldg1m_hillshade.tif
+
+clean:
+	dropdb us.ca.san_francisco
+	rm -r output/tangram_tiles
+	rm output/*.geojson
+
+SF2016_building_footprints:
+	ogr2ogr -f "PostgreSQL" PG:dbname=us.ca.san_francisco -sql "select * from wm84_bldgfoot_withz_20161005_pgz" sources/San_Francisco_Bldg_withZ_20161028/SF_Bldg_201610.gdb
+
+# TODO not needed for API anymore; imagery only
 SF2014_bldg_height:
 	gdalwarp -s_srs sf13.prj -t_srs EPSG:3857 sources/SF2014_bldg_height_1m/L2014_SF_TreeBldg1m.img SF2014_bldg_height.img
 	# tiff is for Mapnik rendering
@@ -35,14 +48,3 @@ SF2014_bldg_height:
 	psql us.ca.san_francisco -f SF2014_bldg_height.sql
 	rm SF2014_bldg_height.sql
 	rm SF2014_bldg_height.img
-
-clean:
-	dropdb us.ca.san_francisco
-	rm -r output/tangram_tiles
-	rm output/*.geojson
-
-zip:
-	tar -cvzf api_data.tgz output
-
-SF2016_building_footprints:
-	ogr2ogr -f "PostgreSQL" PG:dbname=us.ca.san_francisco -sql "select * from wm84_bldgfoot_withz_20161005_pgz" sources/San_Francisco_Bldg_withZ_20161028/SF_Bldg_201610.gdb
