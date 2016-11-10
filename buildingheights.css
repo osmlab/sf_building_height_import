@@ -13,16 +13,154 @@ area[building], area[building:part]
 {
    z-index: 1;
    fill-opacity: 0.0; /* let the background, i.e. the roof, be recognizable */
-	 fill-color: #0000ff;
+   fill-color: #0000ff;
+   width: 1.5;
 }
 
-area[building][height], area[building:part][height]
+area[height<=9]
 {
-        fill-color: #00ff00;
+    fill-color: #F26100;
+    text:"height";
+    font-size: 15;
+    text-position: center;
+    text-color: red;
+    width: 3;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+
+area[height>9]  
+{
+    fill-color: #FFFD36;
+    text:"height";
+    font-size: 15;
+    text-position: center;
+    text-color: red;
+    width: 3;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+
+area[height>24]
+{
+    fill-color: #9224FF;
+    text:"height";
+    font-size: 15;
+    text-position: center;
+    text-color: red;
+    width: 3;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+
+area[height>36]
+{
+    fill-color: #A5FC4E;
+    text:"height";
+    font-size: 15;
+    text-position: center;
+    text-color: red;
+    width: 3;
+    text-halo-color: white;
+    text-halo-radius: 1;
+}
+
+area[height>120]
+{
+    fill-color: #A37237;
+    text:"height";
+    font-size: 15;
+    text-position: center;
+    text-color: red;
+    width: 3;
+    text-halo-color: white;
+    text-halo-radius: 1;
 }
 
 setting::shrink_nodes {
   type: boolean;
   label: tr("Less obtrusive node symbols at low zoom");
   default: true;
+}
+
+
+/* size nodes with zoom level *****************************************/
+
+canvas {
+  default-points: false;
+}
+
+node|z16- {
+  symbol-size:1;
+  symbol-shape: square;
+  symbol-stroke-color: #ffff00;
+  symbol-fill-color: #ffff00;
+}
+
+node:connection {
+  /* in the previous version, the color was transparent, i.e. it
+     was possible to see the ways "below" the node. I changed it
+     to a black fill, which makes connected nodes easier to spot.
+     If you want to have it transparent again, uncomment this:
+  */
+  /* symbol-fill-opacity: 0; */
+
+  symbol-fill-color: #000000
+}
+
+node|z17               { symbol-size: 2; }
+way > node|z17         { symbol-size: 1; }
+node|z17:connection    { symbol-size: 2; }
+
+node|z18               { symbol-size: 4; }
+way > node|z18         { symbol-size: 2; }
+node|z18:connection    { symbol-size: 4; }
+
+node|z19-20              { symbol-size: 5; }
+way > node|z19-20        { symbol-size: 3; }
+node|z19-20:connection   { symbol-size: 5; }
+
+node|z21-22              { symbol-size: 6; }
+way > node|z21-22        { symbol-size: 4; }
+node|z21-22:connection   { symbol-size: 6; }
+
+node|z23-              { symbol-size: 7; }
+way > node|z23-        { symbol-size: 5; }
+node|z23-:connection   { symbol-size: 7; }
+
+
+
+/* Show text only on high zoom levels *********************************/
+
+node|z1-18 {
+  text: "";
+}
+
+node|z19- {
+  text-anchor-horizontal: center;
+  text-anchor-vertical: bottom;
+  text-offset-y: -8;
+  font-size: 8;
+}
+
+node|z20 {
+  font-size: 9;
+  text-offset-y: -10;
+}
+
+node|z21- {
+  font-size: 10;
+  text-offset-y: -12;
+}
+
+node|z22- {
+  font-size: 11;
+}
+
+
+
+/* hide icons and turn restrictions on low zoom ***********************/
+
+node|z1-17, relation|z1-17[type=restriction] {
+  icon-opacity: 0;
 }
