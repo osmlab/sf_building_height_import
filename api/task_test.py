@@ -30,6 +30,10 @@ class TestTask(unittest.TestCase):
         <way id="11">
           <nd ref="3"/>
         </way>
+        <way id="12">
+          <nd ref="3"/>
+          <tag k="building" v="yes"/>
+        </way>
       </osm>
     """
     changeset = task.changeset(BytesIO(empty_osm),building_db)

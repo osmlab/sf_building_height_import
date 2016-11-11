@@ -8,17 +8,19 @@ def height_db():
       db[row[0]] = row[1]
   return db
 
-def should_add_tag(elem):
+def should_add_way(elem,height_db):
+  if not elem.tag == 'way':
+    return False
   has_building_tag = len(elem.xpath("tag[@k='building' or @k='building:part']")) > 0
   missing_height = (len(elem.xpath("tag[@k='height']")) == 0)
-  return has_building_tag and missing_height
+  return has_building_tag and missing_height and height_db.has_key(elem.get("id"))
 
 def changeset(xml_bytes, height_db):
   referenced_nodes = []
   context = etree.iterparse(xml_bytes)
   # collect referenced nodes
   for action, elem in context:
-    if elem.tag == 'way' and should_add_tag(elem):
+    if should_add_way(elem,height_db):
       referenced_nodes += elem.xpath("nd/@ref")
 
   xml_bytes.seek(0)
@@ -28,9 +30,8 @@ def changeset(xml_bytes, height_db):
       if not elem.get('id') in referenced_nodes:
         elem.getparent().remove(elem)
     if elem.tag == 'way':
-      way_id = elem.get("id")
-      if should_add_tag(elem) and height_db.has_key(way_id):
-        height = height_db[way_id]
+      if should_add_way(elem,height_db):
+        height = height_db[elem.get("id")]
         elem.append(etree.Element('tag', k="height", v=str(height)))
         elem.set("action","modify")
       else:
