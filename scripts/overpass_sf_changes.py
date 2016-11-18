@@ -32,15 +32,21 @@ print "Actions (type=modify): {0}".format(len(tree.xpath("action[@type='modify']
 
 # count all actions where OLD does not have a height tag and NEW does.
 
+way_csv = open("ways.txt",'w')
+
 count = 0
 for action in tree.xpath("action[@type='modify']"):
   old_has_height = len(action.xpath("old/way/tag[@k='height']"))
   new_has_height = len(action.xpath("new/way/tag[@k='height']"))
   if not old_has_height and new_has_height:
     count = count + 1
+    way_csv.write(action.xpath("new/way")[0].get("id") + "\n")
 
 for action in tree.xpath("action[@type='create']"):
   if len(action.xpath("way/tag[@k='height']")):
     count = count + 1
+    way_csv.write(action.xpath("way")[0].get("id") + "\n")
 
+way_csv.close()
+   
 print "Actions that add a building height: {0}".format(count)
