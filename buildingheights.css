@@ -67,7 +67,7 @@ area[height>36]
 
 area[height>120]
 {
-    fill-color: #A37237;
+    fill-color: #FF00FF;
     text:"height";
     font-size: 15;
     text-position: center;
