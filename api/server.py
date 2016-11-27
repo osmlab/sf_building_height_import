@@ -5,6 +5,7 @@ import requests
 import task
 from io import BytesIO
 from lxml import etree
+import re
 
 height_db = task.height_db()
 
@@ -12,9 +13,14 @@ height_db = task.height_db()
 def status():
   return "OK"
 
-# example: /api/mapillary/16/10491/25321
-@app.route("/api/mapillary/<int:z>/<int:x>/<int:y>")
-def mapillary(z,x,y):
+# example: /api/mapillary?url=http://tiles.openmassing.org/api/sfbuildingheight_16_10491_25321.osm
+@app.route("/api/mapillary")
+def mapillary():
+  url = request.args.get('url')
+  match = re.search("sfbuildingheight_(\d+)_(\d+)_(\d+).osm",url)
+  z = int(match.group(1))
+  x = int(match.group(2))
+  y = int(match.group(3))
   bb = mercantile.bounds(x,y,z)
   centroid = [(bb.west + bb.east) / 2, (bb.north + bb.south) / 2]
   return redirect("https://www.mapillary.com/app/?lat={0}&lng={1}&z={2}".format(centroid[1],centroid[0],z))
