@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, redirect
 app = Flask(__name__)
 import mercantile
 import requests
@@ -11,6 +11,13 @@ height_db = task.height_db()
 @app.route("/api")
 def status():
   return "OK"
+
+# example: /api/mapillary/16/10491/25321
+@app.route("/api/mapillary/<int:z>/<int:x>/<int:y>")
+def mapillary(z,x,y):
+  bb = mercantile.bounds(x,y,z)
+  centroid = [(bb.west + bb.east) / 2, (bb.north + bb.south) / 2]
+  return redirect("https://www.mapillary.com/app/?lat={0}&lng={1}&z={2}".format(centroid[1],centroid[0],z))
 
 # example: /api/sfbuildingheight_16_10490_25317.osm
 @app.route("/api/sfbuildingheight_<int:z>_<int:x>_<int:y>.osm")
