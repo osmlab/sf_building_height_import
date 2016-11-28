@@ -2,7 +2,7 @@
 
 ## Name of the project
 
-San Francisco Building Height Import
+[San Francisco Building Height Import](http://tasks.openstreetmap.us/project/71)
 
 ## Short Description
 
@@ -50,7 +50,7 @@ Make sure it is activated.
 
 The JOSM changeset you will only include buildings that don't currently have heights in OSM.
 
-Your task to add `height tag` for buildings from the tasking manager. DO NOT DELETE or MODIFY ANY BUILDINGS from the task!
+Your tasks is to remove the height tags from any buildings that do not have an accurate LIDAR reading. If you do not think the building should have a height tag, DO NOT DELETE IT FROM THE LAYER! Instead, ONLY remove the height key.
 
 If you want to edit other tags or change building footprints, do that in a separate changeset without the `#sfbuildingheights` comment.
 
