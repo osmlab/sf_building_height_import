@@ -10,7 +10,7 @@ Annotating existing OSM buildings with LIDAR heights - Read the [wiki page](http
 
 ## Description
 
-Building footprints for San Francisco exist in OSM thanks to the [Mapbox Data Team](https://wiki.openstreetmap.org/wiki/Mapbox#Mapbox_Data_Team). SFdata.gov hosts a [CC0-licensed building dataset](https://data.sfgov.org/Geographic-Locations-and-Boundaries/Building-Footprints-Zipped-Shapefile-Format-/jezr-5bxm?) derived from LIDAR that lacks discrete footprints, but includes accurate height observations. We're annotating each building with a `height` tag.
+Building footprints for San Francisco exist in OSM thanks to the [Mapbox Data Team](https://wiki.openstreetmap.org/wiki/Mapbox#Mapbox_Data_Team). SFdata.gov hosts a [CC0-licensed building dataset](https://sfgis-svc.sfgov.org/sfgis/San_Francisco_Bldg_withZ_20161028.zip) derived from LIDAR that includes accurate height observations. We're annotating each building with a `height` tag.
 
 If you have questions, post on the [wiki Talk page](https://wiki.openstreetmap.org/wiki/Talk:San_Francisco_Building_Height_Import) or on [GitHub issues](https://github.com/bdon/sf_building_height_import/issues).
 
@@ -27,20 +27,20 @@ San Francisco Building Height Import #sfbuildingheights https://wiki.openstreetm
 ## Changeset source
 
 ```
-SF City  1 meter LIDAR building height dataset, 2014. https://sfgis-svc.sfgov.org/sfgis/SF2014_bldg_height_1m.zip
+San Francisco Enterprise Geographic Information Systems Program (SFGIS) Building Footprints, 2016. https://sfgis-svc.sfgov.org/sfgis/San_Francisco_Bldg_withZ_20161028.zip
 ```
 
 ## Detailed Instructions
 
-Please [make a new account on the OSM website](https://www.openstreetmap.org/user/new) for the import. If your username is `brandon` you can make an account called `brandon_import`. 
+Please [make a new account on the OSM website](https://www.openstreetmap.org/user/new) for the import. If your username is `brandon` you can make an account called `brandon_import`. Add your username in this ticket: https://github.com/osmlab/sf_building_height_import/issues/23
 
-[Download JOSM](https://josm.openstreetmap.de). Activate Remote Control:  Open it first and enable Remote Control: Preferences > Remote Control (second to last tab).
+[Download JOSM](https://josm.openstreetmap.de). Activate Remote Control:  Open it first and enable Remote Control: **Preferences > Remote Control** (second to last tab).
 
-Click "Download in JOSM" when you have locked a task. It should open in JOSM.
+Click **link** provided in the **Extra Instructions**. It should open in JOSM.
 
 Add this Map Style to JOSM: [buildingheights.css](https://raw.githubusercontent.com/osmlab/sf_building_height_import/master/buildingheights.css). It's a panel in the right sidebar. Make sure it is activated. 
 
-Add the LIDAR and building centroid imagery: menu Tab Imagery > Add TMS entry...
+Add the LIDAR hillshade: menu Tab **Imagery > Add TMS entry...**
 
 ```
 tms:https://s3-us-west-2.amazonaws.com/openmassing/sf_lidar/{z}/{x}/{y}.png
