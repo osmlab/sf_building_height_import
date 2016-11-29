@@ -2,7 +2,7 @@
 
 ## Name of the project
 
-San Francisco Building Height Import
+[San Francisco Building Height Import](http://tasks.openstreetmap.us/project/71)
 
 ## Short Description
 
@@ -32,7 +32,7 @@ San Francisco Enterprise Geographic Information Systems Program (SFGIS) Building
 
 ## Detailed Instructions
 
-Please [make a new account on the OSM website](https://www.openstreetmap.org/user/new) for the import. If your username is `brandon` you can make an account called `brandon_import`. Add your username in this ticket: https://github.com/osmlab/sf_building_height_import/issues/23
+Please [make a new account on the OSM website](https://www.openstreetmap.org/user/new) for the import. If your username is `brandon` you can make an account called `brandon_sfimport`. and post it [here](https://github.com/osmlab/sf_building_height_import/issues/23)
 
 [Download JOSM](https://josm.openstreetmap.de). Activate Remote Control:  Open it first and enable Remote Control: **Preferences > Remote Control** (second to last tab).
 
@@ -50,9 +50,7 @@ Make sure it is activated.
 
 The JOSM changeset you will only include buildings that don't currently have heights in OSM.
 
-Your tasks is to remove the height tags from any buildings that do not have an accurate LIDAR reading.
-If you do not think the building should have a height tag, DO NOT DELETE IT FROM THE LAYER!
-Instead, ONLY remove the height key.
+If you do not think the building should have a height tag, DO NOT DELETE IT FROM THE LAYER! Instead, ONLY remove the height key.
 
 If you want to edit other tags or change building footprints, do that in a separate changeset without the `#sfbuildingheights` comment.
 
