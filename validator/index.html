@@ -6,6 +6,7 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.js"></script>
     <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.css" rel="stylesheet" />
+    <script src='./sphericalmercator.js'></script>
     <script src="https://npmcdn.com/mapillary-js@1.6.0/dist/mapillary-js.min.js"></script>
     <link href="https://npmcdn.com/mapillary-js@1.6.0/dist/mapillary-js.min.css" rel="stylesheet">
     <style>
@@ -19,13 +20,46 @@
     <div id="map"></div>
 
     <script>
+
+      function getParameterByName(name, url) {
+          if (!url) {
+            url = window.location.href;
+          }
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+              results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      // exmaple: ?import_url=http://tiles.openmassing.org/api/sfbuildingheight_16_10491_25321.osm
+
+      var merc = new SphericalMercator();
+      var importUrl = getParameterByName("import_url");
+      var center, zoom;
+      var bbox = null;
+      if (importUrl) {
+          var re = /(\d+)_(\d+)_(\d+).osm/;
+          var arr = re.exec(importUrl);
+          var z = arr[1]; 
+          var x = arr[2]; 
+          var y = arr[3]; 
+          bbox = merc.bbox(x,y,z);
+          center = [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3])/2];
+          zoom = z-1;
+      } else {
+          center = [-122.4, 37.78];
+          zoom = 15;
+      }
+
       mapboxgl.accessToken = "pk.eyJ1IjoiYWppdGhyYW5rYSIsImEiOiJjaXA5b20zdXQwMW9xdGNseXJ6M2JpeHZlIn0.FTSj2x9tyD37djfYYWrtAw";
 
       var map = new mapboxgl.Map({
         container: "map",
         style: "mapbox://styles/ajithranka/ciw3im06i00k22jsc17f7yvfj",
-        center: [-122.42002, 37.77906],
-        zoom: 16.63,
+        center: center,
+        zoom: zoom,
         pitch: 43.4,
         bearing: 0,
         hash: true,
@@ -42,7 +76,37 @@
       map.once("load", function() {
         setupBuildings();
         setupMapillary();
+        if(bbox) setupBbox();
       });
+
+      function setupBbox() {
+        map.addSource('box', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [[[bbox[0], bbox[1]],
+                        [bbox[2],bbox[1]],
+                        [bbox[2],bbox[3]],
+                        [bbox[0],bbox[3]],
+                        [bbox[0],bbox[1]]]]
+                }
+            }
+        });
+
+        map.addLayer({
+            'id': 'box',
+            'type': 'fill',
+            'source': 'box',
+            'layout': {},
+            'paint': {
+                'fill-color': '#00ff00',
+                'fill-opacity': 0.4
+            }
+        },'3d-buildings');
+      }
+
 
       function setupBuildings() {
         map.addLayer({
