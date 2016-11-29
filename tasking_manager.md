@@ -64,4 +64,6 @@ Click **[here](http://localhost:8111/import?new_layer=true&url={import_url})** t
 
 Click **[here](http://tiles.openmassing.org/api/mapillary?url={import_url})** to view Mapillary imagery.
 
+Click **[here](http://openmassing.org/validator/?import_url={import_url})** to view the 3D validator.
+
 Make sure you retrieve the changeset right before editing. Don't save the .OSM on your local machine - it's created dynamically so will get out of date!
