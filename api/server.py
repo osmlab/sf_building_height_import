@@ -13,17 +13,27 @@ height_db = task.height_db()
 def status():
   return "OK"
 
-# example: /api/mapillary?url=http://tiles.openmassing.org/api/sfbuildingheight_16_10491_25321.osm
-@app.route("/api/mapillary")
-def mapillary():
-  url = request.args.get('url')
+def bbox_from_import_url(url):
   match = re.search("sfbuildingheight_(\d+)_(\d+)_(\d+).osm",url)
   z = int(match.group(1))
   x = int(match.group(2))
   y = int(match.group(3))
-  bb = mercantile.bounds(x,y,z)
+  return mercantile.bounds(x,y,z)
+
+# example: /api/mapillary?url=http://tiles.openmassing.org/api/sfbuildingheight_16_10491_25321.osm
+@app.route("/api/mapillary")
+def mapillary():
+  url = request.args.get('url')
+  bb = bbox_from_import_url(url)
   centroid = [(bb.west + bb.east) / 2, (bb.north + bb.south) / 2]
   return redirect("https://www.mapillary.com/app/?lat={0}&lng={1}&z={2}".format(centroid[1],centroid[0],z))
+
+# example: /api/josm?url=http://tiles.openmassing.org/api/sfbuildingheight_16_10491_25321.osm
+@app.route("/api/josm")
+def josm():
+  url = request.args.get('url')
+  bb = bbox_from_import_url(url)
+  return redirect("http://127.0.0.1:8111/load_and_zoom?left={0}&right={1}&top={2}&bottom={3}".format(bb.west,bb.east,bb.north,bb.south))
 
 # example: /api/sfbuildingheight_16_10490_25317.osm
 @app.route("/api/sfbuildingheight_<int:z>_<int:x>_<int:y>.osm")
