@@ -58,10 +58,15 @@ If you have questions, post on the [wiki Talk page](https://wiki.openstreetmap.o
 
 ## Per Task Instructions
 
+Click **[here](http://openmassing.org/validator/?import_url={import_url})** to view the Mapillary / OSM comparison tool.
+
+** For adding tags **
+
 Click **[here](http://localhost:8111/import?new_layer=true&url={import_url})** to load the changeset into JOSM.
 
-Click **[here](http://tiles.openmassing.org/api/mapillary?url={import_url})** to view Mapillary imagery.
-
-Click **[here](http://openmassing.org/validator/?import_url={import_url})** to view the 3D validator.
-
 Make sure you retrieve the changeset right before editing. Don't save the .OSM on your local machine - it's created dynamically so will get out of date!
+
+** For validating tags **
+
+Click **[here](http://tiles.openmassing.org/api/josm?url={import_url})** to load OSM data in the task into JOSM.
+

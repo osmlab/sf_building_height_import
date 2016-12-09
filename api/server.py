@@ -20,14 +20,6 @@ def bbox_from_import_url(url):
   y = int(match.group(3))
   return mercantile.bounds(x,y,z)
 
-# example: /api/mapillary?url=http://tiles.openmassing.org/api/sfbuildingheight_16_10491_25321.osm
-@app.route("/api/mapillary")
-def mapillary():
-  url = request.args.get('url')
-  bb = bbox_from_import_url(url)
-  centroid = [(bb.west + bb.east) / 2, (bb.north + bb.south) / 2]
-  return redirect("https://www.mapillary.com/app/?lat={0}&lng={1}&z={2}".format(centroid[1],centroid[0],z))
-
 # example: /api/josm?url=http://tiles.openmassing.org/api/sfbuildingheight_16_10491_25321.osm
 @app.route("/api/josm")
 def josm():
