@@ -42,9 +42,9 @@
       if (importUrl) {
           var re = /(\d+)_(\d+)_(\d+).osm/;
           var arr = re.exec(importUrl);
-          var z = arr[1]; 
-          var x = arr[2]; 
-          var y = arr[3]; 
+          var z = arr[1];
+          var x = arr[2];
+          var y = arr[3];
           bbox = merc.bbox(x,y,z);
           center = [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3])/2];
           zoom = z-1;
@@ -190,7 +190,8 @@
             "icon-rotate": {
               "property": "ca",
               "stops": iconRotations()
-            }
+            },
+            "icon-rotation-alignment": "map"
           },
           "paint": {
             "icon-opacity": {
@@ -212,7 +213,8 @@
             "icon-rotate": {
               "property": "ca",
               "stops": iconRotations()
-            }
+            },
+            "icon-rotation-alignment": "map"
           },
           "filter": ["==", "key", "sd41At97Yp44GdWYGWUlxg"]
         });
