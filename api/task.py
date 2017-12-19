@@ -15,6 +15,13 @@ def should_add_way(elem,height_db):
   missing_height = (len(elem.xpath("tag[@k='height']")) == 0)
   return has_building_tag and missing_height and height_db.has_key(elem.get("id"))
 
+def should_round_way(elem):
+  if not elem.tag == 'way':
+    return False
+  has_building_tag = len(elem.xpath("tag[@k='building' or @k='building:part']")) > 0
+  decimal_height = len(elem.xpath("tag[@k='height']")) == 1 and '.' in elem.xpath("tag[@k='height']/@v")[0]
+  return has_building_tag and decimal_height
+
 def changeset(xml_bytes, height_db):
   referenced_nodes = []
   context = etree.iterparse(xml_bytes)
@@ -33,6 +40,31 @@ def changeset(xml_bytes, height_db):
       if should_add_way(elem,height_db):
         height = height_db[elem.get("id")]
         elem.append(etree.Element('tag', k="height", v=str(height)))
+        elem.set("action","modify")
+      else:
+        elem.getparent().remove(elem)
+    if elem.tag == 'relation':
+        elem.getparent().remove(elem)
+  return context.root
+
+def rounding_changeset(xml_bytes):
+  referenced_nodes = []
+  context = etree.iterparse(xml_bytes)
+  # collect referenced nodes
+  for action, elem in context:
+    if should_round_way(elem):
+      referenced_nodes += elem.xpath("nd/@ref")
+
+  xml_bytes.seek(0)
+  context = etree.iterparse(xml_bytes)
+  for action, elem in context:
+    if elem.tag == 'node':
+      if not elem.get('id') in referenced_nodes:
+        elem.getparent().remove(elem)
+    if elem.tag == 'way':
+      if should_round_way(elem):
+        rounded_height = int(round(float(elem.xpath("tag[@k='height']/@v")[0])))
+        elem.xpath("tag[@k='height']")[0].set("v",str(rounded_height))
         elem.set("action","modify")
       else:
         elem.getparent().remove(elem)
