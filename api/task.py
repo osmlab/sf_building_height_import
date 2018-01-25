@@ -19,7 +19,7 @@ def should_round_way(elem):
   if not elem.tag == 'way':
     return False
   has_building_tag = len(elem.xpath("tag[@k='building' or @k='building:part']")) > 0
-  decimal_height = len(elem.xpath("tag[@k='height']")) == 1 and '.' in elem.xpath("tag[@k='height']/@v")[0]
+  decimal_height = len(elem.xpath("tag[@k='height']")) == 1 and '.' in elem.xpath("tag[@k='height']/@v")[0] and 'm' not in elem.xpath("tag[@k='height']/@v")[0]
   return has_building_tag and decimal_height
 
 def changeset(xml_bytes, height_db):
